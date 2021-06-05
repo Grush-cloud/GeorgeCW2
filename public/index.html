@@ -1,311 +1,363 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Lesson Store</title>
-        <!-- bootstrap -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <!-- vuejs -->
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-        <!-- fontawesome -->
-        <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <head>
+    <title>Lesson Store</title>
+    <!-- bootstrap -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <!-- vuejs -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- fontawesome -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
 
-        <script src="lessons.js"></script>
-    </head>
-    <body>
-        <div id="app">
+    <script src="lessons.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- PRODUCTS PAGE -->
+      <div v-if="shop">
+        <div class="row mt-1">
+          <div class="col-10">
+            <h1 class="text-center">{{ sitename }}</h1>
+          </div>
+          <div class="col-2">
+            <button
+              class="btn btn-success"
+              v-on:click="showCheckout"
+              v-if="cartItemCount > 0"
+            >
+              {{cartItemCount}} <i class="fas fa-cart-plus"></i> Checkout
+            </button>
 
-            <!-- PRODUCTS PAGE -->
-            <div v-if="shop">
-                <div class="row mt-1">
-                    <div class="col-10">
-                        <h1 class="text-center">{{ sitename }}</h1>
-                    </div>
-                    <div class="col-2">
-                        <button class="btn btn-success" v-on:click="showCheckout" v-if="cartItemCount > 0">{{cartItemCount}} <i class="fas fa-cart-plus"></i> Checkout</button>
-
-                        <button class="btn btn-secondary disabled" disabled v-else>{{cartItemCount}} <i class="fas fa-cart-plus"></i> Checkout</button>
-                    </div>
-                </div>
-                <div>
-                    <div class="row">
-                        <div class="col-2 pl-5">
-                            <h4>Sort by:</h4>
-                            <fieldset>
-                                <label>
-                                    <input v-model="sort" type="radio" name="Sort" value="price" v-on:click="sortedLessons('price', ord)"> Price
-                                </label><br>
-                                <label>
-                                    <input v-model="sort" type="radio" name="Sort" value="subj"> Subject
-                                </label><br>
-                                <label>
-                                    <input v-model="sort" type="radio" name="Sort" value="loc"> Location
-                                </label><br>
-                                <label>
-                                    <input v-model="sort" type="radio" name="Sort" value="avail"> Availability
-                                </label><br>
-                            </fieldset>
-
-                            <h4 class="mt-5">Order</h4>
-                            <fieldset>
-                                <label>
-                                    <input v-model="ord" type="radio" name="Order" value="asc"> Ascending
-                                </label><br>
-                                <label>
-                                    <input type="radio" name="Order" value="des" v-model="ord"> Descending
-                                </label><br>
-                            </fieldset>
-                            
-                        </div>
-                        <div class="col-10 pl-0 pr-3">
-                            <div class="row">
-                                <div class="col-3 mb-3" v-for="lesson in sortedLessons(sort, ord)">
-                                    <div class="card">
-                                        <img v-bind:src="lesson.image" style="height: 200px;">
-                                        <div class="card-body">
-                                            <h5 class="card-title" v-text="lesson.subject"></h5>
-                                            <p>Location: {{lesson.location}}</p>
-                                            <p>Price: {{lesson.price}}</p>
-                                            <p>Number of spaces: {{lesson.availableInventory - cartCount(lesson)}}</p>
-                                            <button v-on:click="addToCart(lesson)" v-if="canAddToCart(lesson)" class="btn btn-block btn-info">
-                                                Add to cart
-                                            </button>
-                                            <button class="btn btn-secondary btn-block disabled" v-else>
-                                                Out of Space
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- CHECKOUT PAGE -->
-            <div v-else>
-                <div class="row mt-1">
-                    <div class="col-10">
-                        <h1 class="text-center">Checkout</h1>
-                    </div>
-                    <div class="col-2">
-                        <button class="btn btn-success" v-on:click="showCheckout">{{cartItemCount}} <i class="fas fa-cart-plus"></i> Lessons</button>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <ul class="list-group">
-                            <li class="list-group-item" v-for="lesson in cart">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <img v-bind:src="lesson.image" style="height: 30px;width: 30px;">
-                                    </div>
-                                    <div class="col-6">
-                                        <p>{{lesson.subject}}</p>
-                                    </div>
-                                    <div class="col-2">
-                                        <span style="cursor: pointer;" class="text-danger" v-on:click="removeFromCart(lesson)" ><b>x</b></span>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <form>
-                    <div class="row m-5">
-                        <div class="form-group col-4">
-                            <input v-model="order.fullname" class="form-control border-top-0 border-left-0 border-right-0" placeholder="Full Name">
-                        </div>
-                        <div class="form-group col-4">
-                            <input v-model.number="order.phone" class="form-control border-top-0 border-left-0 border-right-0" placeholder="Phone">
-                        </div>
-                        <div class="form-group col-4">
-                            <button class="btn btn-primary" v-if="checkoutBtn" v-on:click="submitOrder">Checkout</button>
-
-                            <button class="btn btn-secondary" disabled v-else>Checkout</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            <button class="btn btn-secondary disabled" disabled v-else>
+              {{cartItemCount}} <i class="fas fa-cart-plus"></i> Checkout
+            </button>
+          </div>
         </div>
-        <script>
-            let lessonStore = new Vue({
-                    el: "#app",
-                    data: {
-                        sitename: "Lessons Store",
-                        cart: [],
-                        lessons: [],
-                        order: {
-                            fullname: '',
-                            phone: ''
-                        },
-                        shop: true,
-                        sort: "subj",
-                        ord: "asc"
-                    },
-                    created: 
-                        function() {
-                            // set the url to your server and route
-                            fetch('https://georgecw2.herokuapp.com/collection/products')
-                                .then(response => response.json())
-                                .then(responseJSON => {
-                                    document.getElementById('response').innerText = JSON.stringify(responseJSON);
-                                })
-                                .catch((error) => {
-                                    document.getElementById('error').innerText = error;
-                                });
-                        },
-                    
-                    methods: {
-                        addToCart: function (lesson) {
-                            this.cart.push(lesson);
-                        },
-                        removeFromCart: function (lesson){
-                            this.cart.splice(this.cart.indexOf(lesson))
-                        },
-                        cartCount(id) {
-                            let count = 0;
-                            for (let i = 0; i < this.cart.length; i++) {
-                                if (this.cart[i] === id) {
-                                    count++;
-                                }
-                            }
-                            return count;
-                        },
-                        canAddToCart: function (lesson) {
-                            return lesson.availableInventory > this.cartCount(lesson);
-                        },
-                        showCheckout() {
-                            this.shop = this.shop ? false : true;
-                        },
-                        sortedLessons(sort, order) {
-                            let lessonsArray = this.lessons.slice(0);
-                            switch (sort) {
-                                // sort by price
-                                case "price":
-                                    if (order == "asc") {
-                                        function comparePrice(a, b) {
-                                            if (a.price > b.price)
-                                                return 1
-                                            if (a.price < b.price)
-                                                return -1
-                                            return 0
-                                        }
-                                        return lessonsArray.sort(comparePrice)
-                                    } else {
-                                        function comparePrice(a, b) {
-                                            if (a.price > b.price)
-                                                return -1
-                                            if (a.price < b.price)
-                                                return 1
-                                            return 0
-                                        }
-                                        return lessonsArray.sort(comparePrice)
-                                    }
-                                    break;
-                                
-                                // sort by location
-                                case "loc":
-                                    if (order == "asc") {
-                                        function compareLocation(a, b) {
-                                            if (a.location > b.location)
-                                                return 1
-                                            if (a.location < b.location)
-                                                return -1
-                                            return 0
-                                        }
-                                        return lessonsArray.sort(compareLocation)
-                                    } else {
-                                        function compareLocation(a, b) {
-                                            if (a.location > b.location)
-                                                return -1
-                                            if (a.location < b.location)
-                                                return 1
-                                            return 0
-                                        }
-                                        return lessonsArray.sort(compareLocation)
-                                    }
-                                    break;
-                                
-                                // sort by availability
-                                case "avail":
-                                    if (order == "asc") {
-                                        function compareAvailability(a, b) {
-                                            if (a.availableInventory > b.availableInventory)
-                                                return 1
-                                            if (a.availableInventory < b.availableInventory)
-                                                return -1
-                                            return 0
-                                        }
-                                        return lessonsArray.sort(compareAvailability)
-                                    } else {
-                                        function compareAvailability(a, b) {
-                                            if (a.availableInventory > b.availableInventory)
-                                                return -1
-                                            if (a.availableInventory < b.availableInventory)
-                                                return 1
-                                            return 0
-                                        }
-                                        return lessonsArray.sort(compareAvailability)
-                                    }
-                                    break;
+        <div>
+          <div class="row">
+            <div class="col-2 pl-5">
+              <h4>Sort by:</h4>
+              <fieldset>
+                <label>
+                  <input
+                    v-model="sort"
+                    type="radio"
+                    name="Sort"
+                    value="price"
+                    v-on:click="sortedLessons('price', ord)"
+                  />
+                  Price </label
+                ><br />
+                <label>
+                  <input v-model="sort" type="radio" name="Sort" value="subj" />
+                  Subject </label
+                ><br />
+                <label>
+                  <input v-model="sort" type="radio" name="Sort" value="loc" />
+                  Location </label
+                ><br />
+                <label>
+                  <input
+                    v-model="sort"
+                    type="radio"
+                    name="Sort"
+                    value="avail"
+                  />
+                  Availability </label
+                ><br />
+              </fieldset>
 
-                                // by default, compare subject
-                                default:
-                                    if (order == "asc") {
-                                        function compareSubject(a, b) {
-                                            if (a.subject > b.subject)
-                                                return 1
-                                            if (a.subject < b.subject)
-                                                return -1
-                                            return 0
-                                        }
-                                        return lessonsArray.sort(compareSubject)
-                                    } else {
-                                        function compareSubject(a, b) {
-                                            if (a.subject > b.subject)
-                                                return -1
-                                            if (a.subject < b.subject)
-                                                return 1
-                                            return 0
-                                        }
-                                        return lessonsArray.sort(compareSubject)
-                                    }
-                                    break;
-                            }
-                        },
-                        submitOrder() {
-                            alert("order submitted");
-                            fetch('https://georgecw2.herokuapp.com/collection/orders', {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": 'application/json',
-                                },
-                                mode: "cors",
-                                cache: "no-store",
-                                body: JSON.stringify(lessonStore.order)
-                            }).then(response => response.json())
-                                .then(responseJSON => { })
-                                .catch((error) => {
-                                    console.log(error);
-                                })
-                        }
-                        
-                    },
-                    
-                    computed: {
-                        cartItemCount: function () {
-                            return this.cart.length;
-                        },
-                        checkoutBtn() {
-                            if (this.order.fullname && this.order.phone) {
-                                return true
-                            }
-                            else {
-                                return false
-                            }
-                        }
-                    }
-                })
-        </script>
-    </body>
+              <h4 class="mt-5">Order</h4>
+              <fieldset>
+                <label>
+                  <input v-model="ord" type="radio" name="Order" value="asc" />
+                  Ascending </label
+                ><br />
+                <label>
+                  <input type="radio" name="Order" value="des" v-model="ord" />
+                  Descending </label
+                ><br />
+              </fieldset>
+            </div>
+            <div class="col-10 pl-0 pr-3">
+              <div class="row">
+                <div
+                  class="col-3 mb-3"
+                  v-for="lesson in sortedLessons(sort, ord)"
+                >
+                  <div class="card">
+                    <img v-bind:src="lesson.image" style="height: 200px" />
+                    <div class="card-body">
+                      <h5 class="card-title" v-text="lesson.subject"></h5>
+                      <p>Location: {{lesson.location}}</p>
+                      <p>Price: {{lesson.price}}</p>
+                      <p>
+                        Number of spaces: {{lesson.availableInventory -
+                        cartCount(lesson)}}
+                      </p>
+                      <button
+                        v-on:click="addToCart(lesson)"
+                        v-if="canAddToCart(lesson)"
+                        class="btn btn-block btn-info"
+                      >
+                        Add to cart
+                      </button>
+                      <button
+                        class="btn btn-secondary btn-block disabled"
+                        v-else
+                      >
+                        Out of Space
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHECKOUT PAGE -->
+      <div v-else>
+        <div class="row mt-1">
+          <div class="col-10">
+            <h1 class="text-center">Checkout</h1>
+          </div>
+          <div class="col-2">
+            <button class="btn btn-success" v-on:click="showCheckout">
+              {{cartItemCount}} <i class="fas fa-cart-plus"></i> Lessons
+            </button>
+          </div>
+        </div>
+        <div>
+          <div>
+            <ul class="list-group">
+              <li class="list-group-item" v-for="lesson in cart">
+                <div class="row">
+                  <div class="col-4">
+                    <img
+                      v-bind:src="lesson.image"
+                      style="height: 30px; width: 30px"
+                    />
+                  </div>
+                  <div class="col-6">
+                    <p>{{lesson.subject}}</p>
+                  </div>
+                  <div class="col-2">
+                    <span
+                      style="cursor: pointer"
+                      class="text-danger"
+                      v-on:click="removeFromCart(lesson)"
+                      ><b>x</b></span
+                    >
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <form>
+          <div class="row m-5">
+            <div class="form-group col-4">
+              <input
+                v-model="order.fullname"
+                class="form-control border-top-0 border-left-0 border-right-0"
+                placeholder="Full Name"
+              />
+            </div>
+            <div class="form-group col-4">
+              <input
+                v-model.number="order.phone"
+                class="form-control border-top-0 border-left-0 border-right-0"
+                placeholder="Phone"
+              />
+            </div>
+            <div class="form-group col-4">
+              <button
+                class="btn btn-primary"
+                v-if="checkoutBtn"
+                v-on:click="submitOrder"
+              >
+                Checkout
+              </button>
+
+              <button class="btn btn-secondary" disabled v-else>
+                Checkout
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      let lessonStore = new Vue({
+        el: "#app",
+        data: {
+          sitename: "Lessons Store",
+          cart: [],
+          lessons: [],
+          order: {
+            fullname: "",
+            phone: "",
+          },
+          shop: true,
+          sort: "subj",
+          ord: "asc",
+        },
+        created: function () {
+          // set the url to your server and route
+          fetch("https://georgecw2.herokuapp.com/collection/products").then(
+            function (res) {
+              res.json().then(function (json) {
+                lessonStore.lessons = json;
+              });
+            }
+          );
+        },
+
+        methods: {
+          addToCart: function (lesson) {
+            this.cart.push(lesson);
+          },
+          removeFromCart: function (lesson) {
+            this.cart.splice(this.cart.indexOf(lesson));
+          },
+          cartCount(id) {
+            let count = 0;
+            for (let i = 0; i < this.cart.length; i++) {
+              if (this.cart[i] === id) {
+                count++;
+              }
+            }
+            return count;
+          },
+          canAddToCart: function (lesson) {
+            return lesson.availableInventory > this.cartCount(lesson);
+          },
+          showCheckout() {
+            this.shop = this.shop ? false : true;
+          },
+          sortedLessons(sort, order) {
+            let lessonsArray = this.lessons.slice(0);
+            switch (sort) {
+              // sort by price
+              case "price":
+                if (order == "asc") {
+                  function comparePrice(a, b) {
+                    if (a.price > b.price) return 1;
+                    if (a.price < b.price) return -1;
+                    return 0;
+                  }
+                  return lessonsArray.sort(comparePrice);
+                } else {
+                  function comparePrice(a, b) {
+                    if (a.price > b.price) return -1;
+                    if (a.price < b.price) return 1;
+                    return 0;
+                  }
+                  return lessonsArray.sort(comparePrice);
+                }
+                break;
+
+              // sort by location
+              case "loc":
+                if (order == "asc") {
+                  function compareLocation(a, b) {
+                    if (a.location > b.location) return 1;
+                    if (a.location < b.location) return -1;
+                    return 0;
+                  }
+                  return lessonsArray.sort(compareLocation);
+                } else {
+                  function compareLocation(a, b) {
+                    if (a.location > b.location) return -1;
+                    if (a.location < b.location) return 1;
+                    return 0;
+                  }
+                  return lessonsArray.sort(compareLocation);
+                }
+                break;
+
+              // sort by availability
+              case "avail":
+                if (order == "asc") {
+                  function compareAvailability(a, b) {
+                    if (a.availableInventory > b.availableInventory) return 1;
+                    if (a.availableInventory < b.availableInventory) return -1;
+                    return 0;
+                  }
+                  return lessonsArray.sort(compareAvailability);
+                } else {
+                  function compareAvailability(a, b) {
+                    if (a.availableInventory > b.availableInventory) return -1;
+                    if (a.availableInventory < b.availableInventory) return 1;
+                    return 0;
+                  }
+                  return lessonsArray.sort(compareAvailability);
+                }
+                break;
+
+              // by default, compare subject
+              default:
+                if (order == "asc") {
+                  function compareSubject(a, b) {
+                    if (a.subject > b.subject) return 1;
+                    if (a.subject < b.subject) return -1;
+                    return 0;
+                  }
+                  return lessonsArray.sort(compareSubject);
+                } else {
+                  function compareSubject(a, b) {
+                    if (a.subject > b.subject) return -1;
+                    if (a.subject < b.subject) return 1;
+                    return 0;
+                  }
+                  return lessonsArray.sort(compareSubject);
+                }
+                break;
+            }
+          },
+          submitOrder() {
+            alert("order submitted");
+            fetch("https://georgecw2.herokuapp.com/collection/orders", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              mode: "cors",
+              cache: "no-store",
+              body: JSON.stringify(lessonStore.order),
+            })
+              .then((response) => response.json())
+              .then((responseJSON) => {})
+              .catch((error) => {
+                console.log(error);
+              });
+          },
+        },
+
+        computed: {
+          cartItemCount: function () {
+            return this.cart.length;
+          },
+          checkoutBtn() {
+            if (this.order.fullname && this.order.phone) {
+              return true;
+            } else {
+              return false;
+            }
+          },
+        },
+      });
+    </script>
+  </body>
 </html>
