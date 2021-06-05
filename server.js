@@ -12,7 +12,8 @@ app.use(express.json())
 app.use(express.static('public'));
 app.set('port', 3000)
 app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*")
+  
+    res.setHeader("Access-Control-Allow-Origin", "https://georgecw2.herokuapp.com")
     res.header("Access-Control-Allow-Headers",'Origin,X-Requested-With,Content-Type,Accept');
     res.setHeader('Access-Control-Allow-Methods','PUT');
     next();
