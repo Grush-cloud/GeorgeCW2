@@ -324,19 +324,19 @@
             alert("order submitted");
 
             fetch('https://georgecw2.herokuapp.com/collection/orders', {
-                                method: 'POST', // set the HTTP method as 'POST'
+                                method: "POST",
                                 headers: {
-                                    'Content-Type': 'application/json', // set the data type as JSON
+                                    "Content-Type": 'application/json',
                                 },
                                 mode: "cors",
                                 cache: "no-store",
-                                body: JSON.stringify(lessonStore.order), // need to stringify the JSON object
-                            })
-                            .then(response => response.json())
-                            .then(responseJSON => {})
-                            .catch((error) => {
-                                console.log(error);
-                            });
+                                body: JSON.stringify(lessonStore.order)
+                            }).then(response => response.json())
+                                .then(responseJSON => { })
+                                .catch((error) => {
+                                    console.log(error);
+                                })
+
 
           }
         },
