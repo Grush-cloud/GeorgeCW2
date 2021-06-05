@@ -182,10 +182,7 @@
               />
             </div>
             <div class="form-group col-4">
-              <button v-if="checkoutBtn"
-                class="btn btn-primary"
-               
-              >
+              <button v-if="checkoutBtn" class="btn btn-primary">
                 Checkout
               </button>
 
@@ -328,13 +325,13 @@
           submitOrder() {
             alert("order submitted");
             fetch("https://georgecw2.herokuapp.com/collection/orders", {
-              method: "POST",
+              method: "POST", // set the HTTP method as 'POST'
               headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/json", // set the data type as JSON
               },
               mode: "cors",
               cache: "no-store",
-              body: JSON.stringify(lessonStore.order),
+              body: JSON.stringify(lessonStore.order), // need to stringify the JSON object
             })
               .then((response) => response.json())
               .then((responseJSON) => {})
