@@ -8,6 +8,7 @@ const app = express()
 
 // config Express.js
 app.use(express.json())
+app.use(express.static('public'));
 app.set('port', 3000)
 app.use ((req,res,next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -30,7 +31,7 @@ app.get('/collection/lessons/img', (req, res, next) => {
 
 // dispaly a message for root path to show that API is working
 app.get('/', (req, res, next) => {
-    res.send('Select a collection, e.g., /collection/messages')
+    res.render('index.html')
 })
 
 // get the collection name
