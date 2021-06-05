@@ -1,5 +1,6 @@
 // Import dependencies modules:
 const express = require('express')
+let cors = require("cors")
 // const bodyParser = require('body-parser')
 
 
