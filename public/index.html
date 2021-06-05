@@ -330,7 +330,7 @@
                                 },
                                 mode: "cors",
                                 cache: "no-store",
-                                body: JSON.stringify(app.checkout), // need to stringify the JSON object
+                                body: JSON.stringify(lessonStore.order), // need to stringify the JSON object
                             })
                             .then(response => response.json())
                             .then(responseJSON => {})
