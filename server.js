@@ -10,10 +10,12 @@ const app = express()
 app.use(express.json())
 app.use(express.static('public'));
 app.set('port', 3000)
-app.use ((req,res,next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Headers",'Origin,X-Requested-With,Content-Type,Accept');
+    res.setHeader('Access-Control-Allow-Methods','PUT');
     next();
-})
+});
 
 // connect to MongoDB
 const MongoClient = require('mongodb').MongoClient;
